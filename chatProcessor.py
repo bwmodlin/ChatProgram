@@ -1,4 +1,4 @@
 from convertUtility import bytesToMessage
 
-def processChat(message, port):
+def processChat(message):
      print("\n" + bytesToMessage(message))

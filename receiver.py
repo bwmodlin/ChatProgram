@@ -2,6 +2,7 @@ import pigpio
 import time
 from convertUtility import bytesToMessage
 from chatProcessor import processChat
+import constants
 
 CLOCKSPEED = 0.01
 
@@ -23,7 +24,7 @@ def sleepCorrection():
         else:
             time.sleep(CLOCKSPEED)
 
-def listen(pi, GPIO_RECEIVER_NUMBER, port):
+def listen(pi, GPIO_RECEIVER_NUMBER):
     start = "0101001001110111"
 
     stop = "0101100101110111"
@@ -74,17 +75,16 @@ def listen(pi, GPIO_RECEIVER_NUMBER, port):
                 state = "readingStart"
 
                 message_buffer = message_buffer[:-1 * len(stop)]
-                processChat(message_buffer, port)
+                processChat(message_buffer)
                 message_buffer = ""
         sleepCorrection()
 
 def listenForData(port):
-    GPIO_TRANSMITTER_NUMBER = 27 - (2 * (port - 1))
 
-    GPIO_RECEIVER_NUMBER = 26 - (2 * (port - 1))
+    GPIO_RECEIVER_NUMBER = constants.GPIO_RECEIVER_NUMBER(port)
 
     pi = pigpio.pi()
 
     pi.callback(GPIO_RECEIVER_NUMBER, pigpio.EITHER_EDGE, switch_callback)
 
-    listen(pi, GPIO_RECEIVER_NUMBER, port)
+    listen(pi, GPIO_RECEIVER_NUMBER)
